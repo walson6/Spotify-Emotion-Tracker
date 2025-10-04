@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Tracker - Emotion Detection</title>
+    <style>
+        body {
+            font-family: "Noto Sans", "Noto Sans CJK JP", "Noto Sans CJK KR", 
+                         "Meiryo", "MS PGothic", "Malgun Gothic", 
+                         -apple-system, BlinkMacSystemFont, 
+                         Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            transition: background-color 0.3s ease;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .video-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        img {
+            width: 100%;
+            height: auto;
+        }
+        .button-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .toggle-button {
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .toggle-button:hover {
+            background-color: #d0d0d0;
+        }
+        .toggle-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        body.dark-mode {
+            background-color: black;
+        }
+        body.dark-mode h1 {
+            color: white;
+        }
+        body.dark-mode .video-container {
+            background-color: black;
+        }
+        body.dark-mode .toggle-button {
+            background-color: #404040;
+            color: #e0e0e0;
+            border-color: #505050;
+        }
+        body.dark-mode .toggle-button:hover {
+            background-color: #505050;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button id="cameraToggle" class="toggle-button" onclick="toggleCamera()">Toggle Capture</button>
+        <button class="toggle-button" onclick="toggleBackground()">Toggle Background</button>
+        <button class="toggle-button" onclick="logout()">Logout</button>
+    </div>    
+    
+
+    <h1>Emotion Detection</h1>
+
+    <div class="video-container">
+        <img src="{{ url_for('video_feed') }}" alt="Video feed">
+    </div>
+
+    <script>
+        let cameraActive = false;
+
+        async function toggleCamera() {
+            try {
+                const response = await fetch('/camera/toggle', {
+                    method: 'POST',
+                });
+                const data = await response.json();
+                if (data.status !== 'success') {
+                    console.error('Failed to toggle camera:', data.message);
+                    alert('Camera Error: ' + data.message + '\n\nTry:\n1. Closing other apps using camera\n2. Checking camera permissions\n3. Restarting the application');
+                }
+            } catch (error) {
+                console.error('Error toggling camera:', error);
+            }
+        }
+
+
+        function toggleBackground() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        function logout() {
+            window.location.href = "{{ url_for('logout') }}";
+        }
+
+        window.onload = function() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            if (isDarkMode) document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

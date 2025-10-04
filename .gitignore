@@ -10,7 +10,7 @@ venv/git
 env/
 
 # Cache directories
-.cache/
+.cache
 
 # Environment variables
 .env
