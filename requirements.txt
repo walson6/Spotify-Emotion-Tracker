@@ -1,0 +1,9 @@
+Flask==2.3.5
+opencv-python==4.9.0.76
+fer==23.0.1
+Pillow==10.1.0
+numpy==1.26.2
+python-dotenv==1.0.0
+spotipy==2.27.0
+supabase==3.5.2
+dataclasses-json==0.5.7
