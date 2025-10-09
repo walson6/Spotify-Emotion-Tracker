@@ -1,6 +1,8 @@
 # supabase_client.py
 import os
 from dotenv import load_dotenv
+from supabase import create_client, Client
+
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -14,7 +16,7 @@ def get_supabase():
     if _client:
         return _client
     try:
-        from supabase import create_client
+        from supabase.client import create_client, Client
     except Exception as e:
         raise RuntimeError("supabase package required. Install with 'pip install supabase'") from e
     if not SUPABASE_URL or not SUPABASE_ANON_KEY:

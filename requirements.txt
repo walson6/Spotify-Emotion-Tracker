@@ -1,9 +1,24 @@
-Flask==2.3.5
-opencv-python==4.9.0.76
-fer==23.0.1
-Pillow==10.1.0
-numpy==1.26.2
-python-dotenv==1.0.0
-spotipy==2.27.0
-supabase==3.5.2
-dataclasses-json==0.5.7
+# Web Framework
+Flask==3.0.0
+
+# Computer Vision & Image Processing
+opencv-python==4.9.0.80
+fer==22.5.1
+moviepy==1.0.3
+Pillow==10.2.0
+numpy==1.26.4
+
+# Environment & Configuration
+python-dotenv==1.0.1
+
+# Music Integration
+spotipy==2.24.0
+
+# Database (Stable Supabase version)
+supabase==1.0.3
+
+# Data Models
+dataclasses-json==0.6.4
+
+# TensorFlow
+tensorflow==2.17.0
