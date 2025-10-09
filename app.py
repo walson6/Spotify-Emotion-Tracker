@@ -5,6 +5,7 @@ Flask app for facial emotion recognition with optional Spotify song tracking.
 
 import os
 from flask import Flask, render_template, Response, jsonify, redirect, url_for
+from supabase_client import get_supabase
 from dotenv import load_dotenv
 from auth import AuthManager
 from camera import CameraManager
@@ -70,6 +71,21 @@ def video_feed():
         camera_manager.generate_video(user), 
         mimetype='multipart/x-mixed-replace; boundary=frame'
     )
+
+
+@app.route('/dashboard')
+def dashboard():
+    user = auth_manager.get_current_user()
+    if not user:
+        return redirect(url_for('login'))
+    supabase = get_supabase()
+    try:
+        res = supabase.table('song_emotions').select('song_name,artist_name,emotion,song_id').eq('user_id', user['id']).execute()
+        rows = res.data or []
+    except Exception as e:
+        print(f"[dashboard] error fetching song_emotions: {e}")
+        rows = []
+    return render_template('dashboard.html', user=user, rows=rows)
 
 
 if __name__ == "__main__":

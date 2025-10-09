@@ -58,29 +58,13 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
-        body.dark-mode {
-            background-color: black;
-        }
-        body.dark-mode h1 {
-            color: white;
-        }
-        body.dark-mode .video-container {
-            background-color: black;
-        }
-        body.dark-mode .toggle-button {
-            background-color: #404040;
-            color: #e0e0e0;
-            border-color: #505050;
-        }
-        body.dark-mode .toggle-button:hover {
-            background-color: #505050;
-        }
+        
     </style>
 </head>
 <body>
     <div class="button-container">
         <button id="cameraToggle" class="toggle-button" onclick="toggleCamera()">Toggle Capture</button>
-        <button class="toggle-button" onclick="toggleBackground()">Toggle Background</button>
+        <button class="toggle-button" onclick="goToDashboard()">Dashboard</button>
         <button class="toggle-button" onclick="logout()">Logout</button>
     </div>    
     
@@ -110,18 +94,12 @@
         }
 
 
-        function toggleBackground() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        }
-
         function logout() {
             window.location.href = "{{ url_for('logout') }}";
         }
 
-        window.onload = function() {
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (isDarkMode) document.body.classList.add('dark-mode');
+        function goToDashboard() {
+            window.location.href = "{{ url_for('dashboard') }}";
         }
     </script>
 </body>
