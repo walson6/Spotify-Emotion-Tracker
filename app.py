@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 from auth import AuthManager
 from camera import CameraManager
 from music import MusicManager
+from datetime import datetime
+import pytz
 
 # Load environment variables
 load_dotenv()
@@ -78,14 +80,40 @@ def dashboard():
     user = auth_manager.get_current_user()
     if not user:
         return redirect(url_for('login'))
+
     supabase = get_supabase()
     try:
-        res = supabase.table('song_emotions').select('song_name,artist_name,emotion,song_id').eq('user_id', user['id']).execute()
+        res = (
+            supabase.table('song_emotions')
+            .select('song_name, artist_name, emotion, song_id, updated_at')
+            .eq('user_id', user['id'])
+            .order('updated_at', desc=True)
+            .execute()
+        )
         rows = res.data or []
     except Exception as e:
         print(f"[dashboard] error fetching song_emotions: {e}")
         rows = []
+
     return render_template('dashboard.html', user=user, rows=rows)
+
+@app.template_filter('datetimeformat_local')
+def datetimeformat_local(value, format='%Y-%m-%d %H:%M'):
+    try:
+        # Convert ISO timestamp string to datetime
+        dt = datetime.fromisoformat(value.replace('Z', '+00:00'))
+
+        # Define UTC and local timezone
+        utc = pytz.utc
+        local_tz = pytz.timezone('America/Los_Angeles')
+
+        # Convert UTC → local time
+        dt_utc = dt.astimezone(utc)
+        dt_local = dt_utc.astimezone(local_tz)
+
+        return dt_local.strftime(format)
+    except Exception:
+        return value
 
 
 if __name__ == "__main__":

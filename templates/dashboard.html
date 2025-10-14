@@ -5,48 +5,110 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Songs & Emotions</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { margin-bottom: 12px; }
-        .actions { margin-bottom: 16px; }
-        a.button { display: inline-block; padding: 8px 12px; background: #e0e0e0; color: #333; border-radius: 6px; text-decoration: none; border: 1px solid #ccc; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 { 
+            margin-bottom: 12px; 
+            text-align: center;
+        }
+
+        .actions { 
+            margin-bottom: 16px; 
+            display: flex;
+            justify-content: space-between;
+        }
+
+        a.button { 
+            display: inline-block; 
+            padding: 8px 12px; 
+            background: #e0e0e0; 
+            color: #333; 
+            border-radius: 6px; 
+            text-decoration: none; 
+            border: 1px solid #ccc; 
+        }
+
         a.button:hover { background: #d0d0d0; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background: #f7f7f7; }
-        .empty { color: #777; margin-top: 20px; }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            table-layout: fixed;
+            word-wrap: break-word; 
+        }
+
+        th, td { 
+            padding: 8px; 
+            border-bottom: 1px solid #eee; 
+            text-align: left; 
+            vertical-align: top;
+        }
+
+        th { 
+            background: #f7f7f7; 
+        }
+
+        td {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        .empty { 
+            color: #777; 
+            margin-top: 20px; 
+            text-align: center;
+        }
     </style>
-    </head>
+</head>
 <body>
-    <div class="actions">
-        <a class="button" href="{{ url_for('index') }}">Back</a>
-        <a class="button" href="{{ url_for('logout') }}" style="float:right;">Logout</a>
+    <div class="container">
+        <div class="actions">
+            <a class="button" href="{{ url_for('index') }}">Back</a>
+            <a class="button" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+
+        <h1>Your Songs & Emotions</h1>
+
+        {% if rows and rows|length > 0 %}
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 35%;">Song</th>
+                    <th style="width: 30%;">Artist</th>
+                    <th style="width: 20%;">Emotion</th>
+                    <th style="width: 15%;">Last Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row.song_name }}</td>
+                    <td>{{ row.artist_name }}</td>
+                    <td>{{ row.emotion }}</td>
+                    <td>
+                        {% if row.updated_at %}
+                            {{ row.updated_at | datetimeformat_local }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">No songs logged yet. Start playing music and turn on the camera to collect emotions.</div>
+        {% endif %}
     </div>
-
-    <h1>Your Songs & Emotions</h1>
-
-    {% if rows and rows|length > 0 %}
-    <table>
-        <thead>
-            <tr>
-                <th>Song</th>
-                <th>Artist</th>
-                <th>Emotion</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in rows %}
-            <tr>
-                <td>{{ row.song_name }}</td>
-                <td>{{ row.artist_name }}</td>
-                <td>{{ row.emotion }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="empty">No songs logged yet. Start playing music and turn on the camera to collect emotions.</div>
-    {% endif %}
 </body>
 </html>
-
-
