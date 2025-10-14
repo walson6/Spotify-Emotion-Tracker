@@ -108,12 +108,27 @@ class CameraManager:
         
         return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
     
-    def detect_emotion(self, frame) -> Tuple[Optional[str], float]:
-        """Detect emotion in frame."""
-        res = self.detector.top_emotion(frame)
-        if res is None or res[1] is None:
-            return None, 0.0
-        return res
+    def detect_emotion(self, frame, visualize=False):
+        results = self.detector.detect_emotions(frame)
+        if not results:
+            return None, 0.0, frame
+
+        # Use the first detected face
+        face = results[0]
+        (x, y, w, h) = face["box"]
+        emotions = face["emotions"]
+        top_emotion = max(emotions, key=emotions.get)
+        confidence = emotions[top_emotion]
+
+        if visualize:
+            # Draw rectangle around face
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # Label emotion
+            cv2.putText(frame, f"{top_emotion} ({confidence:.2f})",
+                        (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.7, (0, 255, 0), 2)
+
+        return top_emotion, confidence, frame
     
     def track_emotion(self, user_id: int, song_id: str, emotion: str):
         """Track emotion for a specific user and song."""
@@ -216,13 +231,13 @@ class CameraManager:
                 continue
             
             # Emotion detection
-            detected_emotion, confidence = self.detect_emotion(frame)
+            detected_emotion, confidence, frame = self.detect_emotion(frame, visualize=True)
             if detected_emotion is None:
                 emotion_text = "Emotion: N/A"
             else:
                 emotion_text = f"{detected_emotion} ({confidence:.2f})"
             
-            frame = self.draw_text_with_border(frame, f"Emotion: {emotion_text}", (10, 30))
+            frame = self.draw_text_with_border(frame, f"Emotion: {emotion_text}", (10, 20))
             
             # Get current song
             song_data = music_tracker.get_current_song(user_id) if user_id else {"name": "N/A", "artist": "N/A", "id": None}
@@ -233,8 +248,8 @@ class CameraManager:
             artist_name = song_data.get('artist') or "N/A"
             song_id = song_data.get('id', None)
             
-            frame = self.draw_text_with_border(frame, f"Song: {song_name}", (10, 70))
-            frame = self.draw_text_with_border(frame, f"Artist: {artist_name}", (10, 110))
+            frame = self.draw_text_with_border(frame, f"Song: {song_name}", (10, 55))
+            frame = self.draw_text_with_border(frame, f"Artist: {artist_name}", (10, 90))
             
             # Handle song change and emotion tracking
             self.handle_song_change(user_id, song_id, song_name, artist_name)
