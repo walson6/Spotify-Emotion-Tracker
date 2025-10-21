@@ -30,6 +30,3 @@ Each detected emotion is linked to the currently playing song and stored in Supa
 Install dependencies using: 
 ```bash
 pip install -r requirements.txt
-
-```bash
-pip install -r requirements.txt
