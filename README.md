@@ -27,6 +27,20 @@ Each detected emotion is linked to the currently playing song and stored in Supa
 
 ## Requirements
 
-Install dependencies using: 
+Install dependencies using:  
+
 ```bash
 pip install -r requirements.txt
+```
+
+---
+
+## Preview
+
+Here’s what the app looks like in action:
+
+### 🎵 Emotion and Song Dashboard
+![Emotion and Song Dashboard](EmotionAndSongDashboard.PNG)
+
+### 😀 Emotion Detection (Happy)
+![Emotion Detection Happy](EmotionDetectionHappy.PNG)
